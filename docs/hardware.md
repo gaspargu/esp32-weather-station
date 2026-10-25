@@ -14,13 +14,15 @@ Paths in this guide are relative to the repository root. Run CLI commands from t
 
 ## Wiring
 
+![ESP32-S3 weather station with DHT22 sensor](images/hardware/esp32-station.jpg)
+
 Disconnect USB and any other power source before changing connections. Follow the terminal labels on your sensor module; their physical order may vary.
 
 | Sensor terminal | ESP32-S3 pin |
-| --- | --- |
-| `+` | `3V3` |
-| `-` | `GND` |
-| `OUT` | `GPIO4` |
+| --------------- | ------------ |
+| `+`             | `3V3`        |
+| `-`             | `GND`        |
+| `OUT`           | `GPIO4`      |
 
 GPIO4 means the pin labeled `4` or `IO4`, not the fourth physical pin. ESP32 GPIOs are not 5 V tolerant.
 

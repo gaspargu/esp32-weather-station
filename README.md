@@ -4,11 +4,7 @@ A local temperature and humidity monitoring system: an ESP32-S3 reads an AM2302 
 
 ## Architecture
 
-```text
-AM2302 / DHT22 → ESP32-S3 → Wi-Fi / HTTP → FastAPI → SQLite
-                                            ↑
-                                      React dashboard
-```
+![Data flow from ESP32-S3 through FastAPI and SQLite to the React dashboard](docs/images/architecture.png)
 
 During development, Vite serves the dashboard and forwards its API requests to FastAPI. The computer hosting these services must remain running to receive and display new readings.
 
@@ -32,12 +28,12 @@ The API and dashboard can also be tested without connected hardware; see their g
 
 ## Documentation
 
-| Guide | Contents |
-| --- | --- |
-| [Hardware and firmware](docs/hardware.md) | Components, wiring, PlatformIO, Wi-Fi, API delivery, and sensor troubleshooting |
-| [Backend](backend/README.md) | Python setup, local/LAN server modes, API, timestamps, SQLite, networking, and tests |
-| [Frontend](frontend/README.md) | Node setup, Vite proxy, desktop/mobile access, dashboard behavior, build, and tests |
-| [Documentation images](docs/images/README.md) | Where to store hardware photos and dashboard screenshots, and how to embed them |
+| Guide                                         | Contents                                                                             |
+| --------------------------------------------- | ------------------------------------------------------------------------------------ |
+| [Hardware and firmware](docs/hardware.md)     | Components, wiring, PlatformIO, Wi-Fi, API delivery, and sensor troubleshooting      |
+| [Backend](backend/README.md)                  | Python setup, local/LAN server modes, API, timestamps, SQLite, networking, and tests |
+| [Frontend](frontend/README.md)                | Node setup, Vite proxy, desktop/mobile access, dashboard behavior, build, and tests  |
+| [Documentation images](docs/images/README.md) | Where to store hardware photos and dashboard screenshots, and how to embed them      |
 
 ## Repository structure
 

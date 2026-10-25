@@ -72,7 +72,11 @@ No router, global state library, chart library, or UI framework is needed for th
 
 ## Screenshots
 
-Store desktop and mobile screenshots in `docs/images/dashboard/`. See the [image guide](../docs/images/README.md) for naming, privacy checks, and Markdown examples. No screenshots are included yet.
+![Weather station dashboard showing device readings, timestamps, and stale-data status](../docs/images/dashboard/dashboard-capture.png)
+
+The screenshot shows the `Stale` state: the last available readings remain visible when no new data has arrived for at least 90 seconds.
+
+Store additional desktop and mobile screenshots in `docs/images/dashboard/`. See the [image guide](../docs/images/README.md) for naming, privacy checks, and Markdown examples.
 
 ## Future deployment
 

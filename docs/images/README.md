@@ -2,21 +2,20 @@
 
 [Project overview](../../README.md)
 
-Store documentation images here so GitHub can display them using relative Markdown paths. No photos or screenshots are included yet; the folders are prepared for future files.
+Store documentation images here so GitHub can display them using relative Markdown paths.
 
 ## Folder layout
 
 ```text
 docs/images/
+  architecture.png          System data-flow diagram
   hardware/
-    esp32-station.jpg    Suggested name for the assembled station photo
-    sensor-wiring.jpg    Suggested name for a wiring detail photo
+    esp32-station.jpg        Assembled station photo
   dashboard/
-    desktop.png         Suggested name for a desktop screenshot
-    mobile.png          Suggested name for a mobile screenshot
+    dashboard-capture.png    Desktop dashboard screenshot
 ```
 
-The filenames above are suggestions, not existing assets. The `.gitkeep` files only keep the empty folders in Git; remove them when adding actual images if desired.
+Use descriptive filenames for additional wiring photos or mobile screenshots. Convert HEIC originals to JPG before adding them; renaming the extension does not convert the format. Keep originals outside Git when they are not needed for documentation.
 
 ## Add and reference an image
 
@@ -30,19 +29,19 @@ In the root `README.md`:
 ```markdown
 ![ESP32-S3 weather station with AM2302 sensor](docs/images/hardware/esp32-station.jpg)
 
-![Weather station dashboard on desktop](docs/images/dashboard/desktop.png)
+![Weather station dashboard on desktop](docs/images/dashboard/dashboard-capture.png)
 ```
 
 In `frontend/README.md`:
 
 ```markdown
-![Weather station dashboard on mobile](../docs/images/dashboard/mobile.png)
+![Weather station dashboard on desktop](../docs/images/dashboard/dashboard-capture.png)
 ```
 
 In `docs/hardware.md`:
 
 ```markdown
-![AM2302 sensor connected to GPIO4](images/hardware/sensor-wiring.jpg)
+![ESP32-S3 weather station with AM2302 sensor](images/hardware/esp32-station.jpg)
 ```
 
 Keep the main README focused on one station photo and one dashboard overview. Put wiring close-ups in the hardware guide and additional desktop/mobile screenshots in the frontend guide. Use descriptive alternative text for accessibility.
