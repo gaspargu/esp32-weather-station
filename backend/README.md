@@ -2,6 +2,8 @@
 
 FastAPI + SQLite backend for local development. Requires Python 3.11 or newer.
 
+[Project overview](../README.md) · [Hardware and firmware](../docs/hardware.md) · [Frontend guide](../frontend/README.md)
+
 ## Setup
 
 Use **PowerShell on Windows** or **Bash on Linux**. In VS Code on Windows, select **Terminal: Select Default Profile > PowerShell**, then open a new terminal.
@@ -102,7 +104,7 @@ backend/.venv/bin/python -m uvicorn app.main:app --app-dir backend --host 0.0.0.
 | Phone or another computer on the LAN | `http://<computer-lan-ip>:8000/docs` |
 | ESP32 (`BACKEND_READINGS_URL` in `include/config.h`) | `http://<computer-lan-ip>:8000/api/readings` |
 
-Use your computer's LAN IPv4 address (find it with `ipconfig` on Windows or `ip -4 addr` on Linux), **not the ESP32's address printed in the serial monitor**. Select the Wi-Fi/Ethernet interface connected to the ESP32's network, not a loopback, VPN, or container interface. After changing `include/config.h`, upload the firmware again.
+Use your computer's LAN IPv4 address (find it with `ipconfig` on Windows or `ip -4 addr` on Linux), **not the ESP32's address printed in the serial monitor**. Select the Wi-Fi/Ethernet interface connected to the ESP32's network, not a loopback, VPN, or container interface. Follow the [firmware delivery instructions](../docs/hardware.md#send-readings-to-the-backend) to configure the ESP32's destination URL and upload it.
 
 Your firewall may require an inbound allowance for TCP port 8000 from your trusted local network; do not disable the firewall. Binding to `0.0.0.0` does not automatically expose the server to the Internet, but makes it reachable through more interfaces.
 
@@ -155,7 +157,7 @@ curl -X POST http://127.0.0.1:8000/api/readings \
 curl http://127.0.0.1:8000/api/readings/latest
 ```
 
-Use `/docs` or the examples above to test the backend independently. To receive actual sensor readings, start the server with `--host 0.0.0.0`, set `BACKEND_READINGS_URL` in `include/config.h` to `http://<computer-lan-ip>:8000/api/readings`, and upload the firmware again. See the [project README](../README.md#send-esp32-readings-to-the-backend) for the complete procedure. The firmware sends a fresh valid reading every 30 seconds and currently omits `measured_at`.
+Use `/docs` or the examples above to test the backend independently. For actual sensor readings, use [LAN server mode](#receive-readings-from-the-esp32-normal-station-operation) and follow the [firmware delivery instructions](../docs/hardware.md#send-readings-to-the-backend). To view stored readings, follow the [frontend guide](../frontend/README.md).
 
 ## Storage
 

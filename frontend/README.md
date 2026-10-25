@@ -2,11 +2,13 @@
 
 A minimal React + TypeScript dashboard built with Vite. Requires Node.js 20 or newer and npm. Prefer a currently supported Node.js LTS release for new installations.
 
+[Project overview](../README.md) · [Backend guide](../backend/README.md) · [Hardware and firmware](../docs/hardware.md)
+
 ## Run locally
 
 Start FastAPI first, from the repository root (see [backend instructions](../backend/README.md#run)). Keep the usual `--host 0.0.0.0` mode if receiving ESP32 readings.
 
-In a second terminal:
+In a second terminal, starting from the repository root:
 
 ```powershell
 cd frontend
@@ -67,6 +69,10 @@ src/
 ```
 
 No router, global state library, chart library, or UI framework is needed for this screen.
+
+## Screenshots
+
+Store desktop and mobile screenshots in `docs/images/dashboard/`. See the [image guide](../docs/images/README.md) for naming, privacy checks, and Markdown examples. No screenshots are included yet.
 
 ## Future deployment
 
