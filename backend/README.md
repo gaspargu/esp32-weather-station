@@ -134,6 +134,20 @@ export WEATHER_DATABASE_PATH="$HOME/weather-data/weather.sqlite3"
 
 This setting applies to the current shell and its child processes. To return to the default path, run `unset WEATHER_DATABASE_PATH` before restarting the server.
 
+## Project structure
+
+```text
+app/
+  main.py       Application factory, database path configuration, and startup
+  schemas.py    Pydantic request and response validation
+  database.py   SQLite connections, initialization, and queries (no HTTP logic)
+  routes.py     HTTP endpoints registered through an APIRouter
+tests/
+  test_api.py   API validation, persistence, and database isolation tests
+```
+
+`create_app(database_path=...)` allows each application instance to use its own SQLite file. Connections are opened and closed per database operation; no connection is shared globally.
+
 ## Tests
 
 From the repository root:

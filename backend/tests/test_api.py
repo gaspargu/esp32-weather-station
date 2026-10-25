@@ -90,3 +90,25 @@ def test_readings_persist_across_restarts(tmp_path: Path):
         assert first.post("/api/readings", json=payload()).status_code == 201
     with TestClient(create_app(database)) as second:
         assert second.get("/api/readings/latest").json()["device_id"] == "esp32-01"
+
+
+def test_app_instances_use_independent_databases(tmp_path: Path):
+    with (
+        TestClient(create_app(tmp_path / "first.sqlite3")) as first,
+        TestClient(create_app(tmp_path / "second.sqlite3")) as second,
+    ):
+        assert first.post("/api/readings", json=payload()).status_code == 201
+        assert second.get("/api/readings").json() == []
+        assert second.get("/api/readings/latest").status_code == 404
+
+
+def test_database_path_configuration(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    environment_path = tmp_path / "environment" / "weather.sqlite3"
+    explicit_path = tmp_path / "explicit" / "weather.sqlite3"
+    monkeypatch.setenv("WEATHER_DATABASE_PATH", str(environment_path))
+    with TestClient(create_app()) as client:
+        assert client.post("/api/readings", json=payload()).status_code == 201
+    assert environment_path.exists()
+    with TestClient(create_app(explicit_path)) as client:
+        assert client.get("/api/readings").json() == []
+    assert explicit_path.exists()
