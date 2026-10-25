@@ -37,7 +37,18 @@ If the interpreter path is not found, check that you are in the repository root 
 
 ## Run
 
-From the repository root:
+### Choose the listening address
+
+| Scenario | Uvicorn option |
+| --- | --- |
+| Test `/docs`, HTTP requests, or a frontend running on the same computer | `--host 127.0.0.1` |
+| Receive ESP32 readings or access the API from a phone/another computer | `--host 0.0.0.0` |
+
+`127.0.0.1` is loopback: only the server computer can connect through it. `0.0.0.0` listens on all IPv4 interfaces, allowing other devices to connect if the network and firewall permit it. It is a listening address, **not a destination URL**.
+
+### Local API development (no ESP32 access)
+
+From the repository root, use these commands when all clients run on the server computer:
 
 **Windows / PowerShell:**
 
@@ -61,7 +72,41 @@ backend\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --hos
 
 Keep the terminal open while using the API. Press **Ctrl+C** to stop the server. To start it again, run the same command; you do not need to recreate the virtual environment.
 
-To allow an ESP32 on the same trusted local network to connect, replace `--host 127.0.0.1` with `--host 0.0.0.0`. Use your computer's LAN IPv4 address (find it with `ipconfig` on Windows or `ip -4 addr` on Linux) in the ESP32 configuration, not `localhost`, `127.0.0.1`, or `0.0.0.0`. Select the Wi-Fi/Ethernet interface connected to the ESP32's network, not a loopback, VPN, or container interface. Your firewall may require an inbound allowance for TCP port 8000 from your trusted local network; do not disable the firewall.
+### Receive readings from the ESP32 (normal station operation)
+
+Stop any existing server with **Ctrl+C**, then run **one** of these commands from the repository root:
+
+**Windows / PowerShell:**
+
+```powershell
+./backend/.venv/Scripts/python.exe -m uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000
+```
+
+**Windows CMD:**
+
+```bat
+backend\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000
+```
+
+**Linux / Bash:**
+
+```bash
+backend/.venv/bin/python -m uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000
+```
+
+`--reload` is optional during code development; it is not required to receive readings.
+
+| Client | URL to use |
+| --- | --- |
+| Browser on the server computer | `http://127.0.0.1:8000/docs` |
+| Phone or another computer on the LAN | `http://<computer-lan-ip>:8000/docs` |
+| ESP32 (`BACKEND_READINGS_URL` in `include/config.h`) | `http://<computer-lan-ip>:8000/api/readings` |
+
+Use your computer's LAN IPv4 address (find it with `ipconfig` on Windows or `ip -4 addr` on Linux), **not the ESP32's address printed in the serial monitor**. Select the Wi-Fi/Ethernet interface connected to the ESP32's network, not a loopback, VPN, or container interface. After changing `include/config.h`, upload the firmware again.
+
+Your firewall may require an inbound allowance for TCP port 8000 from your trusted local network; do not disable the firewall. Binding to `0.0.0.0` does not automatically expose the server to the Internet, but makes it reachable through more interfaces.
+
+If delivery fails, open `http://<computer-lan-ip>:8000/health` from a phone on the same Wi-Fi (with mobile data and VPN disabled for the test). If it cannot connect, check the listening address, computer IP, firewall, and Wi-Fi client isolation. A successful `/health` request from `127.0.0.1` alone does not prove LAN access works.
 
 This version has **no authentication or TLS**. Do not expose it to the Internet or forward the port on your router. The computer must remain running to receive readings.
 
@@ -110,7 +155,7 @@ curl -X POST http://127.0.0.1:8000/api/readings \
 curl http://127.0.0.1:8000/api/readings/latest
 ```
 
-The current firmware does not send HTTP readings yet; use `/docs` or the examples above to test the backend first.
+Use `/docs` or the examples above to test the backend independently. To receive actual sensor readings, start the server with `--host 0.0.0.0`, set `BACKEND_READINGS_URL` in `include/config.h` to `http://<computer-lan-ip>:8000/api/readings`, and upload the firmware again. See the [project README](../README.md#send-esp32-readings-to-the-backend) for the complete procedure. The firmware sends a fresh valid reading every 30 seconds and currently omits `measured_at`.
 
 ## Storage
 

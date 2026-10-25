@@ -11,11 +11,37 @@ A temperature and humidity monitoring project using an ESP32-S3 and an AM2302 (D
 - Retry Wi-Fi connections every 30 seconds while continuing sensor readings.
 - Receive and store readings with a FastAPI + SQLite backend, including UTC timestamps.
 
-A React dashboard and firmware HTTP delivery are planned but not implemented yet.
+- Send a fresh valid reading to FastAPI over HTTP every 30 seconds when configured.
+
+A React dashboard is planned but not implemented yet.
 
 ## Backend
 
-See [backend/README.md](backend/README.md) for virtual environment setup, API usage, timestamp semantics, and tests. The backend can be tested independently; the firmware does not send readings to it yet.
+See [backend/README.md](backend/README.md) for virtual environment setup, API usage, timestamp semantics, and tests.
+
+### Send ESP32 readings to the backend
+
+**Choose the correct server mode:** `--host 127.0.0.1` is for tests and clients on the server computer only. **Use `--host 0.0.0.0` to receive ESP32 readings** or connect from another device. See [backend run instructions](backend/README.md#run) for complete PowerShell, CMD, and Linux commands.
+
+1. Start FastAPI with `--host 0.0.0.0 --port 8000` (see the backend README). Keep the computer running and connect it to the same trusted LAN as the ESP32.
+2. Find your computer's LAN IPv4 address using `ipconfig` on Windows or `ip -4 addr` on Linux.
+3. Edit `include/config.h`, replacing the example IP with your computer's address:
+
+   ```cpp
+   constexpr char BACKEND_READINGS_URL[] = "http://192.168.1.50:8000/api/readings";
+   constexpr char DEVICE_ID[] = "esp32-01";
+   ```
+
+4. Upload the firmware again, then open the serial monitor. The first send is attempted after approximately 30 seconds. A successful send prints `Reading saved by backend (HTTP 201).`
+5. Open `http://127.0.0.1:8000/docs` on the server computer and query `/api/readings/latest` or `/api/readings` to verify storage.
+
+Use your computer's address, not the ESP32's IP, `localhost`, or `0.0.0.0`. If necessary, allow inbound TCP port 8000 from your trusted LAN through the firewall without disabling it. If your computer's address changes, update the URL and upload again.
+
+`0.0.0.0` tells the server where to listen; it is never the URL's destination address. Even in this mode you can still open `http://127.0.0.1:8000/docs` on the server computer. To test LAN access, open `http://<computer-lan-ip>:8000/health` from another device on the same network.
+
+An empty URL disables delivery. Invalid readings and readings taken while offline are not queued; the firmware tries a fresh reading at the next 30-second interval. HTTP calls are synchronous with 2-second connect and read timeouts, so sensor readings may be briefly delayed during a request. The firmware omits `measured_at` until its clock is synchronized; the backend generates `received_at` in UTC.
+
+This HTTP setup has no authentication or encryption: use it only on a trusted local network and do not expose the server to the Internet. `config.h` contains no credentials and is tracked by Git; never add passwords or tokens there.
 
 ## Hardware
 
@@ -93,6 +119,7 @@ pio device monitor --baud 115200
 - `platformio.ini`: board, Arduino framework, serial speed, and library dependencies.
 - `src/main.cpp`: sensor type (`DHT22`), data pin (`DHT_PIN`), and reading interval (`READ_INTERVAL_MS`).
 - `include/secrets.h`: local Wi-Fi credentials (not committed).
+- `include/config.h`: backend readings URL and device identifier.
 
 The project currently uses the `esp32-s3-devkitc-1` board definition. It does not configure the full 16 MB flash or enable the 8 MB PSRAM of the N16R8 module; neither is required for this initial sensor test.
 
@@ -110,6 +137,6 @@ If the firmware reports `Failed to read DHT22`:
 
 - [x] Read temperature and humidity over serial.
 - [x] Connect to a 2.4 GHz Wi-Fi network.
-- [ ] Send readings to a FastAPI backend over HTTP.
+- [x] Send readings to a FastAPI backend over HTTP.
 - [x] Store measurement history in the backend.
 - [ ] Build a responsive React monitoring dashboard.
