@@ -13,7 +13,7 @@ A temperature and humidity monitoring project using an ESP32-S3 and an AM2302 (D
 
 - Send a fresh valid reading to FastAPI over HTTP every 30 seconds when configured.
 
-A React dashboard is planned but not implemented yet.
+A responsive React dashboard displays device values, reception freshness, and the latest 100 readings. See [frontend/README.md](frontend/README.md) for setup, LAN access, and tests. Authentication and Internet deployment are not implemented yet.
 
 ## Backend
 
@@ -139,4 +139,5 @@ If the firmware reports `Failed to read DHT22`:
 - [x] Connect to a 2.4 GHz Wi-Fi network.
 - [x] Send readings to a FastAPI backend over HTTP.
 - [x] Store measurement history in the backend.
-- [ ] Build a responsive React monitoring dashboard.
+- [x] Build a responsive React monitoring dashboard.
+- [ ] Add charts, authentication, and secure Internet deployment.
