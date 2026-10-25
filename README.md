@@ -51,6 +51,10 @@ This version is intended for a **trusted local network only**. There is no authe
 
 Wi-Fi credentials belong only in the ignored `include/secrets.h`; never commit credentials or share firmware binaries containing them. See the component guides for network configuration and timestamp limitations.
 
+## License
+
+This project is licensed under the [MIT License](LICENSE). Third-party dependencies retain their own licenses.
+
 ## Roadmap
 
 - [x] Read temperature and humidity over serial.
