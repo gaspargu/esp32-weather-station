@@ -4,3 +4,8 @@
 .vscode/launch.json
 .vscode/ipch
 /include/secrets.h
+backend/.venv/
+backend/data/
+__pycache__/
+.pytest_cache/
+*.pyc

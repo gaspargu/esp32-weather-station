@@ -9,8 +9,13 @@ A temperature and humidity monitoring project using an ESP32-S3 and an AM2302 (D
 - Report failed sensor readings.
 - Connect to a 2.4 GHz Wi-Fi network and display the assigned IP address.
 - Retry Wi-Fi connections every 30 seconds while continuing sensor readings.
+- Receive and store readings with a FastAPI + SQLite backend, including UTC timestamps.
 
-A FastAPI backend and a React dashboard are planned but not implemented yet.
+A React dashboard and firmware HTTP delivery are planned but not implemented yet.
+
+## Backend
+
+See [backend/README.md](backend/README.md) for virtual environment setup, API usage, timestamp semantics, and tests. The backend can be tested independently; the firmware does not send readings to it yet.
 
 ## Hardware
 
@@ -36,7 +41,7 @@ GPIO4 means the pin labeled `4` or `IO4`, not the fourth physical pin. ESP32 GPI
 2. Open this project folder in VS Code.
    Copy `include/secrets.example.h` to `include/secrets.h` if it does not exist, then enter your Wi-Fi credentials as described below.
 3. Connect the sensor as shown above, then connect the board by USB.
-4. My ESP32 has two USB ports: USB and COM. In my case wrked the port COM.
+4. This board has two USB ports labeled USB and COM. The COM port was used successfully for uploading and serial monitoring.
 5. Run **PlatformIO: Upload** to build and upload the firmware. PlatformIO automatically installs the libraries declared in `platformio.ini`.
 6. Run **PlatformIO: Serial Monitor** at **115200 baud**.
 
@@ -106,5 +111,5 @@ If the firmware reports `Failed to read DHT22`:
 - [x] Read temperature and humidity over serial.
 - [x] Connect to a 2.4 GHz Wi-Fi network.
 - [ ] Send readings to a FastAPI backend over HTTP.
-- [ ] Store measurement history.
+- [x] Store measurement history in the backend.
 - [ ] Build a responsive React monitoring dashboard.
