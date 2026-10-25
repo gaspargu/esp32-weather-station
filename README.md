@@ -7,8 +7,10 @@ A temperature and humidity monitoring project using an ESP32-S3 and an AM2302 (D
 - Read temperature in Celsius and relative humidity every 5 seconds.
 - Display readings in the serial monitor at 115200 baud.
 - Report failed sensor readings.
+- Connect to a 2.4 GHz Wi-Fi network and display the assigned IP address.
+- Retry Wi-Fi connections every 30 seconds while continuing sensor readings.
 
-Wi-Fi connectivity, a FastAPI backend, and a React dashboard are planned but not implemented yet.
+A FastAPI backend and a React dashboard are planned but not implemented yet.
 
 ## Hardware
 
@@ -21,10 +23,10 @@ Wi-Fi connectivity, a FastAPI backend, and a React dashboard are planned but not
 Disconnect USB and any other power source before changing connections. Follow the terminal labels on your sensor module; their physical order may vary.
 
 | Sensor terminal | ESP32-S3 pin |
-| --- | --- |
-| `+` | `3V3` |
-| `-` | `GND` |
-| `OUT` | `GPIO4` |
+| --------------- | ------------ |
+| `+`             | `3V3`        |
+| `-`             | `GND`        |
+| `OUT`           | `GPIO4`      |
 
 GPIO4 means the pin labeled `4` or `IO4`, not the fourth physical pin. ESP32 GPIOs are not 5 V tolerant.
 
@@ -32,9 +34,11 @@ GPIO4 means the pin labeled `4` or `IO4`, not the fourth physical pin. ESP32 GPI
 
 1. Install [Visual Studio Code](https://code.visualstudio.com/) and the [PlatformIO IDE extension](https://platformio.org/install/ide?install=vscode).
 2. Open this project folder in VS Code.
+   Copy `include/secrets.example.h` to `include/secrets.h` if it does not exist, then enter your Wi-Fi credentials as described below.
 3. Connect the sensor as shown above, then connect the board by USB.
-4. Run **PlatformIO: Upload** to build and upload the firmware. PlatformIO automatically installs the libraries declared in `platformio.ini`.
-5. Run **PlatformIO: Serial Monitor** at **115200 baud**.
+4. My ESP32 has two USB ports: USB and COM. In my case wrked the port COM.
+5. Run **PlatformIO: Upload** to build and upload the firmware. PlatformIO automatically installs the libraries declared in `platformio.ini`.
+6. Run **PlatformIO: Serial Monitor** at **115200 baud**.
 
 Expected output:
 
@@ -44,6 +48,30 @@ Temperature: 24.3 °C | Humidity: 58.2 %
 ```
 
 Allow a few seconds after startup for the first reading.
+
+### Wi-Fi setup
+
+Edit `include/secrets.h` locally:
+
+```cpp
+#pragma once
+
+constexpr char WIFI_SSID[] = "YOUR_NETWORK_NAME";
+constexpr char WIFI_PASSWORD[] = "YOUR_NETWORK_PASSWORD";
+```
+
+Use a **2.4 GHz** network; the ESP32-S3 does not support 5 GHz Wi-Fi. Upload the firmware again after changing credentials.
+
+`include/secrets.h` is excluded from Git. Never put real credentials in `include/secrets.example.h`. Credentials are compiled into the firmware, so do not share firmware binaries containing them.
+
+When connected, the serial monitor prints:
+
+```text
+Connecting to Wi-Fi...
+Wi-Fi connected. IP address: 192.168.1.100
+```
+
+If the network is unavailable, the firmware retries every 30 seconds. Sensor readings continue independently. An empty SSID disables connection attempts. Wi-Fi connectivity alone does not send readings to a server or confirm Internet access.
 
 ### PlatformIO CLI
 
@@ -59,6 +87,7 @@ pio device monitor --baud 115200
 
 - `platformio.ini`: board, Arduino framework, serial speed, and library dependencies.
 - `src/main.cpp`: sensor type (`DHT22`), data pin (`DHT_PIN`), and reading interval (`READ_INTERVAL_MS`).
+- `include/secrets.h`: local Wi-Fi credentials (not committed).
 
 The project currently uses the `esp32-s3-devkitc-1` board definition. It does not configure the full 16 MB flash or enable the 8 MB PSRAM of the N16R8 module; neither is required for this initial sensor test.
 
@@ -75,18 +104,7 @@ If the firmware reports `Failed to read DHT22`:
 ## Roadmap
 
 - [x] Read temperature and humidity over serial.
-- [ ] Connect to a 2.4 GHz Wi-Fi network.
+- [x] Connect to a 2.4 GHz Wi-Fi network.
 - [ ] Send readings to a FastAPI backend over HTTP.
 - [ ] Store measurement history.
 - [ ] Build a responsive React monitoring dashboard.
-
-## Commit messages
-
-Use English commit messages with a type prefix, for example:
-
-```text
-feat: add Wi-Fi connectivity
-fix: handle failed sensor readings
-docs: update wiring instructions
-chore: update dependencies
-```
